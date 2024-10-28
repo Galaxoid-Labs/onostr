@@ -28,19 +28,38 @@ main :: proc() {
 		mem.tracking_allocator_destroy(&track)
 	}
 
-	kp := make_keypair()
-	defer destroy_keypair(&kp)
+	kp, ok := make_keypair().?
+	defer if ok {
+		destroy_keypair(&kp)
+	}
 
 	fmt.println(kp.private_hex)
 	fmt.println(kp.public_hex)
 
-	event := make_event(1, [][]string{{"Cool stuff"}}, "hello", &kp)
-	defer destroy_event(&event)
+	nkp, nkpok := make_keypair_from_hex(
+		"1a98ff7486267e4fcffc055851e80a66e44315c057b8c7db50dbbf2977aec2d9",
+	).?
 
-	sign_event(&event, &kp)
+	defer if nkpok {
+		destroy_keypair(&nkp)
+	}
 
-	fmt.println(event.id)
-	fmt.println(event.sig)
-	fmt.println(event.created_at)
+	fmt.println(kp.private_hex)
+	fmt.println(nkp.private_hex)
+	fmt.println(nkp.public_hex)
+
+	if is_valid_public_hex(nkp.public_hex) {
+		fmt.println("Its valid")
+	}
+
+
+	// event := make_event(1, [][]string{{"Cool stuff"}}, "hello", &kp)
+	// defer destroy_event(&event)
+
+	// sign_event(&event, &kp)
+
+	// fmt.println(event.id)
+	// fmt.println(event.sig)
+	// fmt.println(event.created_at)
 
 }
