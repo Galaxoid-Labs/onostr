@@ -5,6 +5,7 @@ import "core:crypto/hash"
 import "core:encoding/hex"
 import "core:encoding/json"
 import "core:fmt"
+import "core:strings"
 import "core:time"
 
 Event :: struct {
@@ -17,8 +18,16 @@ Event :: struct {
 	sig:        string `json:"sig"`,
 }
 
-make_event :: proc(kind: u16, tags: [][]string, content: string, kp: ^KeyPair) -> Event {
-	return Event{"", kp.public_hex, time.time_to_unix(time.now()), kind, tags, content, ""}
+make_event :: proc(kind: u16, tags: [][]string, content: string, kp: KeyPair) -> Event {
+	return Event {
+		"",
+		strings.clone(kp.public_hex),
+		time.time_to_unix(time.now()),
+		kind,
+		tags,
+		content,
+		"",
+	}
 }
 
 get_event_time :: proc(event: ^Event) -> time.Time {
@@ -61,13 +70,12 @@ string_for_id :: proc(event: ^Event) -> string {
 	tags_json, err := json.marshal(event.tags)
 	defer delete(tags_json)
 
-	tags_str := string(tags_json)
 	return fmt.aprintf(
 		`[0,"%s",%d,%d,%s,"%s"]`,
 		event.pubkey,
 		event.created_at,
 		event.kind,
-		tags_str,
+		string(tags_json),
 		event.content,
 	)
 }
@@ -75,4 +83,5 @@ string_for_id :: proc(event: ^Event) -> string {
 destroy_event :: proc(event: ^Event) {
 	delete(event.id)
 	delete(event.sig)
+	delete(event.pubkey)
 }

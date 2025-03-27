@@ -98,13 +98,16 @@ make_keypair_from_bytes :: proc(
 		return nil
 	}
 
-	public_hex_bytes := hex.encode(public_bytes[:])
-	private_hex_bytes := hex.encode(private_bytes[:])
+	//defer delete(public_bytes[:])
 
-	public_hex := string(public_hex_bytes)
-	private_hex := string(private_hex_bytes)
-
-	return KeyPair{private_bytes^, public_bytes, private_hex, public_hex, keypair, xonly_pubkey}
+	return KeyPair {
+		private_bytes^,
+		public_bytes,
+		string(hex.encode(private_bytes[:])),
+		string(hex.encode(public_bytes[:])),
+		keypair,
+		xonly_pubkey,
+	}
 }
 
 @(private)
