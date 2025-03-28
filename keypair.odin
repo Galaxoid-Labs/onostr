@@ -98,8 +98,6 @@ make_keypair_from_bytes :: proc(
 		return nil
 	}
 
-	//defer delete(public_bytes[:])
-
 	return KeyPair {
 		private_bytes^,
 		public_bytes,
