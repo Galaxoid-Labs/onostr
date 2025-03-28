@@ -64,39 +64,28 @@ main :: proc() {
 
 
 	raw_event_json := `{
-	  "id": "ad5f1d299021bc437b432123f8de9eb23928afa5eb58731f2f056570fe0ccc89",
-	  "pubkey": "04c915daefee38317fa734444acee390a8269fe5810b2241e5e6dd343dfbecc9",
-	  "created_at": 1743177458,
-	  "kind": 1,
-	  "tags": [
-	    [
-	      "e",
-	      "8671a9f028ef39da20d228df2208213eb566564a53718587ad88ef02cf04dcec",
-	      "ws://192.168.18.7:7777",
-	      "root"
-	    ],
-	    [
-	      "e",
-	      "000d190ae61e314703647ff41fb29de8a6e49034fd3109fb43fb140652cef62a",
-	      "wss://nos.lol",
-	      "reply"
-	    ],
-	    [
-	      "p",
-	      "e96911258fabb7c235ffbb052c96a07bf91f3ef91cfa036e4f442fd23320261f",
-	      "",
-	      "mention"
-	    ],
-	    [
-	      "p",
-	      "04c915daefee38317fa734444acee390a8269fe5810b2241e5e6dd343dfbecc9",
-	      "",
-	      "mention"
-	    ]
-	  ],
-	  "content": "great advice",
-	  "sig": "58d457548a5f0c2cb58de2f5ff8ab80b5e8e7d4a140d115ac4091d022ca68eb7ac27ff06494db7a8bb6aa9dc4e37788614f6ecfe4c99a1c86d7433d051c3ad9d"
-	}`
+  "id": "000000006b1732820aec3b7f9d4cfa24ac79396a96a0f1fed54391f901f9cd3e",
+  "pubkey": "3e7878d43299adeaf042da1972fc562702abbe0087c2bb9af15810782c6be31e",
+  "created_at": 1742896304,
+  "kind": 1,
+  "tags": [
+    [
+      "miner",
+      "notemine"
+    ],
+    [
+      "client",
+      "https://sandwichfarm.github.io/notemine"
+    ],
+    [
+      "nonce",
+      "1404078877",
+      "31"
+    ]
+  ],
+  "content": "neat good.",
+  "sig": "17856c4bc9a306e075f5efbc0abddb51fc7ee6fb844a821215099c8170ffa9f919421cbc7cccf4f8797289d5c6dd9adbdfdeea82231e3bcbce7fc1f73e079cf6"
+}`
 
 
 	event, event_ok := make_event_from_json(raw_event_json).?
@@ -106,6 +95,8 @@ main :: proc() {
 
 	fmt.println(event.id)
 	fmt.println(event.pubkey)
+
+	fmt.println(event_id_difficulty(event))
 
 	// fmt.printfln(string_for_id(event))
 	// fmt.println(event.sig)

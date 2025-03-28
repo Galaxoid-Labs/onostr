@@ -160,6 +160,38 @@ is_valid_signed_event :: proc(
 
 }
 
+event_id_difficulty :: proc(
+	event: Event,
+	allocator := context.allocator,
+	loc := #caller_location,
+) -> int {
+
+	if event.id == "" {
+		return -1
+	}
+
+	id_bytes, id_bytes_ok := hex.decode(transmute([]u8)event.id[:], allocator, loc)
+	defer delete(id_bytes, allocator, loc)
+
+	if !id_bytes_ok {
+		return -1
+	}
+
+	leading_zero_bits := 0
+	for b in id_bytes {
+		for i := 7; i >= 0; i -= 1 {
+			if (b & (1 << u8(i))) == 0 {
+				leading_zero_bits += 1
+			} else {
+				return leading_zero_bits
+			}
+		}
+	}
+
+	return leading_zero_bits
+
+}
+
 string_for_id :: proc(
 	event: Event,
 	allocator := context.allocator,
@@ -176,7 +208,6 @@ string_for_id :: proc(
 		string(tags_json),
 		event.content,
 		allocator = allocator,
-		//loc,
 	)
 }
 
