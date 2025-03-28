@@ -27,25 +27,25 @@ main :: proc() {
 			}
 			mem.tracking_allocator_destroy(&track)
 		}
+	} else {
+		// Use arean allocator
+		// arena: vmem.Arena
+		// arena_err := vmem.arena_init_growing(&arena)
+		// ensure(arena_err == nil)
+		// arena_alloc := vmem.arena_allocator(&arena)
+		// defer vmem.arena_destroy(&arena)
+		// context.allocator = arena_alloc
 	}
 
-	// arena: vmem.Arena
-	// arena_err := vmem.arena_init_growing(&arena)
-	// ensure(arena_err == nil)
-	// arena_alloc := vmem.arena_allocator(&arena)
-	// defer vmem.arena_destroy(&arena)
-
-	// context.allocator = arena_alloc
-
-	// kp, ok := make_keypair().?
-	// defer if ok {
-	// 	destroy_keypair(&kp)
-	// }
+	kp, kp_ok := make_keypair().?
+	defer if kp_ok {
+		destroy_keypair(&kp)
+	}
 
 
-	// fmt.println("make_keypair: ", ok)
-	// fmt.println("private_hex: ", kp.private_hex)
-	// fmt.println("public_hex: ", kp.public_hex)
+	fmt.println("make_keypair: ", kp_ok)
+	fmt.println("private_hex: ", kp.private_hex)
+	fmt.println("public_hex: ", kp.public_hex)
 
 	// evt := make_event(0, [][]string{{"a", "b"}}, "content", kp)
 	// defer destroy_event(&evt)
@@ -77,11 +77,8 @@ main :: proc() {
 	fmt.printf("  id:       %s\n", event.id)
 	fmt.printf("  pubkey:   %s\n", event.pubkey)
 	fmt.printf("  kind:     %d\n", event.kind)
+	fmt.printf("  created_at: %d\n", event.created_at)
+	fmt.printf("  tags:     %s\n", event.tags)
 	fmt.printf("  content:  %s\n", event.content)
 
-	//fmt.println("private_hex: ", kp.private_hex)
-
-	//testing.expect(t, ok, "make_keypair failed to generate a keypair")
-	//testing.expect(t, len(kp.private_hex) == 64, "private_hex is empty")
-	//testing.expect(t, len(kp.public_hex) == 64, "public_hex is empty")
 }

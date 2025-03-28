@@ -14,7 +14,7 @@ KeyPair :: struct {
 	_xonly_pubkey: secp256k1_xonly_pubkey,
 }
 
-make_keypair :: proc() -> Maybe(KeyPair) {
+make_keypair :: proc(allocator := context.allocator, loc := #caller_location) -> Maybe(KeyPair) {
 
 	ctx := make_randomized_context()
 	defer secp256k1_context_destroy(ctx)
@@ -22,18 +22,22 @@ make_keypair :: proc() -> Maybe(KeyPair) {
 	private_bytes: [32]u8
 	crypto.rand_bytes(private_bytes[:])
 
-	return make_keypair_from_bytes(&private_bytes, ctx)
+	return make_keypair_from_bytes(&private_bytes, ctx, allocator, loc)
 }
 
-destroy_keypair :: proc(kp: ^KeyPair) {
-	delete(kp.private_hex)
-	delete(kp.public_hex)
+destroy_keypair :: proc(kp: ^KeyPair, allocator := context.allocator, loc := #caller_location) {
+	delete(kp.private_hex, allocator, loc)
+	delete(kp.public_hex, allocator, loc)
 }
 
-make_keypair_from_hex :: proc(private_hex: string) -> Maybe(KeyPair) {
+make_keypair_from_hex :: proc(
+	private_hex: string,
+	allocator := context.allocator,
+	loc := #caller_location,
+) -> Maybe(KeyPair) {
 
-	private_bytes_slice, ok := hex.decode(transmute([]u8)private_hex[:])
-	defer delete(private_bytes_slice)
+	private_bytes_slice, ok := hex.decode(transmute([]u8)private_hex[:], allocator, loc)
+	defer delete(private_bytes_slice, allocator, loc)
 
 	if !ok {
 		return nil
@@ -49,13 +53,17 @@ make_keypair_from_hex :: proc(private_hex: string) -> Maybe(KeyPair) {
 	private_bytes: [32]u8
 	copy(private_bytes[:], private_bytes_slice)
 
-	return make_keypair_from_bytes(&private_bytes, ctx)
+	return make_keypair_from_bytes(&private_bytes, ctx, allocator, loc)
 }
 
-is_valid_public_hex :: proc(public_hex: string) -> bool {
+is_valid_public_hex :: proc(
+	public_hex: string,
+	allocator := context.allocator,
+	loc := #caller_location,
+) -> bool {
 
-	public_bytes_slice, ok := hex.decode(transmute([]u8)public_hex[:])
-	defer delete(public_bytes_slice)
+	public_bytes_slice, ok := hex.decode(transmute([]u8)public_hex[:], allocator, loc)
+	defer delete(public_bytes_slice, allocator, loc)
 
 	if !ok {
 		return false
@@ -78,6 +86,8 @@ is_valid_public_hex :: proc(public_hex: string) -> bool {
 make_keypair_from_bytes :: proc(
 	private_bytes: ^[32]u8,
 	ctx: ^secp256k1_context,
+	allocator := context.allocator,
+	loc := #caller_location,
 ) -> Maybe(KeyPair) {
 
 	if len(private_bytes) != 32 {
@@ -101,8 +111,8 @@ make_keypair_from_bytes :: proc(
 	return KeyPair {
 		private_bytes^,
 		public_bytes,
-		string(hex.encode(private_bytes[:])),
-		string(hex.encode(public_bytes[:])),
+		string(hex.encode(private_bytes[:], allocator, loc)),
+		string(hex.encode(public_bytes[:], allocator, loc)),
 		keypair,
 		xonly_pubkey,
 	}
