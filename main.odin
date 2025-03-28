@@ -43,29 +43,60 @@ main :: proc() {
 	}
 
 
-	fmt.println("make_keypair: ", kp_ok)
-	fmt.println("private_hex: ", kp.private_hex)
-	fmt.println("public_hex: ", kp.public_hex)
+	// fmt.println("make_keypair: ", kp_ok)
+	// fmt.println("private_hex: ", kp.private_hex)
+	// fmt.println("public_hex: ", kp.public_hex)
 
-	// evt := make_event(0, [][]string{{"a", "b"}}, "content", kp)
-	// defer destroy_event(&evt)
+	// event := make_event(0, [][]string{{"a", "b"}}, "content", kp)
+	// defer destroy_event(&event)
 
-	// signed := sign_event(&evt, &kp)
-	// fmt.println("make_event: ", evt)
+	// id_first := string_for_id(event)
+	// fmt.println("string_for_id: ", id_first)
+
+	// id_second := string_for_id(event)
+	// fmt.println("string_for_id: ", id_second)
+
+	// signed := sign_event(&event, &kp)
+	//fmt.println("make_event: ", event)
+
+	// signed_again := sign_event(&event, &kp)
+	// fmt.println("signed_again: ", event)
 
 
 	raw_event_json := `{
-	    "id": "4376c65d2f232afbe9b882a35baa4f6fe8667c4e684749af565f981833ed6a65",
-	    "pubkey": "6e468422dfb74a5738702a8823b9b28168abab8655faacb6853cd0ee15deee93",
-	    "created_at": 1673347337,
-	    "kind": 1,
-	    "content": "Walled gardens became prisons, and nostr is the first step towards tearing down the prison walls.",
-	    "tags": [
-	      ["e", "3da979448d9ba263864c4d6f14984c423a3838364ec255f03c7904b1ae77f206"],
-	      ["p", "bf2376e17ba4ec269d10fcc996a4746b451152be9031fa48e74553dde5526bce"]
+	  "id": "ad5f1d299021bc437b432123f8de9eb23928afa5eb58731f2f056570fe0ccc89",
+	  "pubkey": "04c915daefee38317fa734444acee390a8269fe5810b2241e5e6dd343dfbecc9",
+	  "created_at": 1743177458,
+	  "kind": 1,
+	  "tags": [
+	    [
+	      "e",
+	      "8671a9f028ef39da20d228df2208213eb566564a53718587ad88ef02cf04dcec",
+	      "ws://192.168.18.7:7777",
+	      "root"
 	    ],
-	    "sig": "908a15e46fb4d8675bab026fc230a0e3542bfade63da02d542fb78b2a8513fcd0092619a2c8c1221e581946e0191f2af505dfdf8657a414dbca329186f009262"
-	  }`
+	    [
+	      "e",
+	      "000d190ae61e314703647ff41fb29de8a6e49034fd3109fb43fb140652cef62a",
+	      "wss://nos.lol",
+	      "reply"
+	    ],
+	    [
+	      "p",
+	      "e96911258fabb7c235ffbb052c96a07bf91f3ef91cfa036e4f442fd23320261f",
+	      "",
+	      "mention"
+	    ],
+	    [
+	      "p",
+	      "04c915daefee38317fa734444acee390a8269fe5810b2241e5e6dd343dfbecc9",
+	      "",
+	      "mention"
+	    ]
+	  ],
+	  "content": "great advice",
+	  "sig": "58d457548a5f0c2cb58de2f5ff8ab80b5e8e7d4a140d115ac4091d022ca68eb7ac27ff06494db7a8bb6aa9dc4e37788614f6ecfe4c99a1c86d7433d051c3ad9d"
+	}`
 
 
 	event, event_ok := make_event_from_json(raw_event_json).?
@@ -73,12 +104,24 @@ main :: proc() {
 		destroy_event(&event)
 	}
 
-	fmt.println("Parsed event:")
-	fmt.printf("  id:       %s\n", event.id)
-	fmt.printf("  pubkey:   %s\n", event.pubkey)
-	fmt.printf("  kind:     %d\n", event.kind)
-	fmt.printf("  created_at: %d\n", event.created_at)
-	fmt.printf("  tags:     %s\n", event.tags)
-	fmt.printf("  content:  %s\n", event.content)
+	fmt.println(event.id)
+	fmt.println(event.pubkey)
+
+	// fmt.printfln(string_for_id(event))
+	// fmt.println(event.sig)
+
+	// fmt.println("make_event_from_json: ", event)
+
+	is_valid := is_valid_signed_event(event)
+
+	fmt.println("is_valid_signed_event: ", is_valid)
+
+	// fmt.println("Parsed event:")
+	// fmt.printf("  id:       %s\n", event.id)
+	// fmt.printf("  pubkey:   %s\n", event.pubkey)
+	// fmt.printf("  kind:     %d\n", event.kind)
+	// fmt.printf("  created_at: %d\n", event.created_at)
+	// fmt.printf("  tags:     %s\n", event.tags)
+	// fmt.printf("  content:  %s\n", event.content)
 
 }

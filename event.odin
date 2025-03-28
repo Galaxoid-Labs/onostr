@@ -81,9 +81,6 @@ sign_event :: proc(
 
 	id_bytes := hex.encode(hash_id[:], allocator, loc)
 
-	id_bytes_fixed: [32]u8
-	copy(id_bytes_fixed[:], id_bytes)
-
 	ctx := make_randomized_context()
 	defer secp256k1_context_destroy(ctx)
 
@@ -91,8 +88,8 @@ sign_event :: proc(
 	crypto.rand_bytes(aux_rand[:])
 
 	sig: [64]u8
-	secp256k1_schnorrsig_sign32(ctx, &sig, &id_bytes_fixed, &kp._keypair, &aux_rand)
-	if secp256k1_schnorrsig_verify(ctx, &sig, &id_bytes_fixed, 32, &kp._xonly_pubkey) != 1 {
+	secp256k1_schnorrsig_sign32(ctx, &sig, &hash_id, &kp._keypair, &aux_rand)
+	if secp256k1_schnorrsig_verify(ctx, &sig, &hash_id, len(hash_id), &kp._xonly_pubkey) != 1 {
 		return false
 	}
 
@@ -107,13 +104,6 @@ is_valid_signed_event :: proc(
 	allocator := context.allocator,
 	loc := #caller_location,
 ) -> bool {
-	if len(event.id) != 32 {
-		return false
-	}
-
-	if len(event.sig) != 64 {
-		return false
-	}
 
 	string_for_id := string_for_id(event, allocator, loc)
 	defer delete(string_for_id, allocator, loc)
@@ -124,10 +114,52 @@ is_valid_signed_event :: proc(
 	id_bytes := hex.encode(hash_id[:], allocator, loc)
 	defer delete(id_bytes, allocator, loc)
 
-	return event.id == string(id_bytes)
+	if event.id != string(id_bytes) {
+		return false
+	}
+
+	pubkey_bytes, pubkey_bytes_ok := hex.decode(transmute([]u8)event.pubkey[:], allocator, loc)
+	defer delete(pubkey_bytes, allocator, loc)
+
+	pubkey_bytes_fixed: [32]u8
+	copy(pubkey_bytes_fixed[:], pubkey_bytes)
+
+	if !pubkey_bytes_ok {
+		return false
+	}
+
+	ctx := make_randomized_context()
+	defer secp256k1_context_destroy(ctx)
+
+	xonly_pubkey: secp256k1_xonly_pubkey
+	xonly_pubkey_valid :=
+		secp256k1_xonly_pubkey_parse(ctx, &xonly_pubkey, &pubkey_bytes_fixed) == 1
+	if !xonly_pubkey_valid {
+		return false
+	}
+
+	sig_bytes, sig_bytes_ok := hex.decode(transmute([]u8)event.sig[:], allocator, loc)
+	defer delete(sig_bytes, allocator, loc)
+	if !sig_bytes_ok {
+		return false
+	}
+
+	sig_bytes_fixed: [64]u8
+	copy(sig_bytes_fixed[:], sig_bytes)
+
+	return(
+		secp256k1_schnorrsig_verify(
+			ctx,
+			&sig_bytes_fixed,
+			&hash_id,
+			len(hash_id),
+			&xonly_pubkey,
+		) ==
+		1 \
+	)
+
 }
 
-@(private)
 string_for_id :: proc(
 	event: Event,
 	allocator := context.allocator,
@@ -143,8 +175,8 @@ string_for_id :: proc(
 		event.kind,
 		string(tags_json),
 		event.content,
-		allocator,
-		loc,
+		allocator = allocator,
+		//loc,
 	)
 }
 
