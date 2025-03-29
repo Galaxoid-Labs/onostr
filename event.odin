@@ -38,7 +38,7 @@ make_event :: proc(
 }
 
 make_event_from_json :: proc(json_str: string, allocator := context.allocator) -> Maybe(Event) {
-	event := Event{}
+	event: Event
 	err := json.unmarshal(transmute([]byte)json_str, &event, json.DEFAULT_SPECIFICATION, allocator)
 	if err != nil {
 		return nil
