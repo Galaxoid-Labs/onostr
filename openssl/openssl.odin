@@ -7,6 +7,8 @@ when ODIN_OS == .Windows {
 	foreign import lib {"lib/windows/libssl_static.lib", "lib/windows/libcrypto_static.lib"}
 } else when ODIN_OS == .Darwin && ODIN_ARCH == .arm64 {
 	foreign import lib {"system:ssl.3", "system:crypto.3"}
+} else when ODIN_OS == .Linux && ODIN_ARCH == .arm64 {
+	foreign import lib {"lib/linux-arm/libssl.a", "lib/linux-arm/libcrypto.a"}
 } else {
 	foreign import lib {"system:ssl", "system:crypto"}
 }
