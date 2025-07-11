@@ -55,7 +55,6 @@ foreign lib {
 	SSL_ctrl :: proc(ssl: ^SSL, cmd: c.int, larg: c.long, parg: rawptr) -> c.long ---
 }
 
-// This is a macro in c land.
 SSL_set_tlsext_host_name :: proc(ssl: ^SSL, name: cstring) -> c.int {
 	return c.int(
 		SSL_ctrl(ssl, SSL_CTRL_SET_TLSEXT_HOSTNAME, TLSEXT_NAMETYPE_host_name, rawptr(name)),
