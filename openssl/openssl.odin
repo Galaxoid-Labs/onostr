@@ -22,9 +22,16 @@ when ODIN_OS == .Linux {
 	}
 } else when ODIN_OS == .Windows {
 	when ODIN_ARCH == .arm64 {
-		foreign import lib {"lib/windows-arm/libssl_static.lib", "lib/windows-arm/libcrypto_static.lib"}
+		#panic("Unsupported architecture for OpenSSL on Windows: " + ODIN_ARCH)
 	} else when ODIN_ARCH == .amd64 {
-		foreign import lib {"lib/windows/libssl_static.lib", "lib/windows/libcrypto_static.lib"}
+		foreign import lib {
+			"lib/windows/libssl.lib", "lib/windows/libcrypto.lib",
+			"system:ws2_32.lib",
+			"system:gdi32.lib",
+			"system:advapi32.lib",
+			"system:crypt32.lib",
+			"system:user32.lib",
+		}
 	} else {
 		#panic("Unsupported architecture for OpenSSL on windows: " + ODIN_ARCH)
 	}

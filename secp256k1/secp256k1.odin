@@ -5,15 +5,15 @@ import "core:fmt"
 
 when ODIN_OS == .Linux {
 	when ODIN_ARCH == .arm64 {
-		foreign import secp256k1 "lib/linux-arm/libsecp256k1.a" // TODO:
+		foreign import secp256k1 "lib/linux-arm/libsecp256k1.a"
 	} else {
 		foreign import secp256k1 "lib/linux/libsecp256k1.a"
 	}
 } else when ODIN_OS == .Darwin {
 	when ODIN_ARCH == .arm64 {
-		foreign import secp256k1 "lib/macos-arm/libsecp256k1.a" // TODO:
+		foreign import secp256k1 "lib/macos-arm/libsecp256k1.a"
 	} else {
-		foreign import secp256k1 "lib/macos/libsecp256k1.a"
+		foreign import secp256k1 "lib/macos/libsecp256k1.a" // TODO:
 	}
 } else when ODIN_OS == .Windows {
 	when ODIN_ARCH == .arm64 {

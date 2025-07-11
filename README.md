@@ -15,7 +15,7 @@ Full support for Nostr keys available. Also, some basic support for creating, en
 * ✅ - Linux aarch
 * 🏗️ - MacOS amd64
 * ✅ - MacOS aarch
-* 🏗️ - Win amd64
+* ✅ - Win amd64
 * 🏗️ - Win aarch
 
 
