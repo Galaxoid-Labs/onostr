@@ -1,9 +1,19 @@
 package onostr
 
+import "core:bufio"
+import "core:bytes"
 import "core:encoding/hex"
 import "core:fmt"
+import "core:log"
 import "core:mem"
 import vmem "core:mem/virtual"
+import "ws"
+
+
+str := "[\"REQ\", \"sub\", {\"kinds\":[1]}]"
+
+import "core:encoding/json"
+import "core:strings"
 
 main :: proc() {
 
@@ -121,6 +131,38 @@ main :: proc() {
 	fmt.println("encode: ", enc, ec)
 	defer delete(hex_bytes)
 	defer delete(enc)
+
+
+	context.logger = log.create_console_logger()
+
+	// scratch := mem.Scratch_Allocator{}
+	// fba := mem.scratch_allocator_init(&scratch, 8 * 64 * 1024)
+
+	client := ws.client_init()
+	defer ws.client_deinit(&client)
+
+	//connection, err := client_connect(&client, "wss://stream.bybit.com/v5/public/linear")
+	connection, err := ws.client_connect(&client, "wss://relay.damus.io")
+	if err != nil {
+		log.error(err)
+	}
+
+	write_err := ws.connection_send(&connection, str)
+	log.debug(write_err)
+	if write_err != nil {
+		log.error(write_err)
+		panic("done")
+	}
+
+	for {
+		msg, recv_err := ws.connection_recv(&connection)
+		// convert msg bytes to string
+		if msg != nil && len(msg) > 0 {
+			fmt.println(string(msg), recv_err)
+			delete(msg)
+		}
+
+	}
 
 
 	// fmt.print(CHARSET_REV)
