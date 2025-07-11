@@ -17,3 +17,7 @@ Full support for Nostr keys available. Also, some basic support for creating, en
 * ✅ - MacOS aarch
 * 🏗️ - Win amd64
 * 🏗️ - Win aarch
+
+
+#### Acknowledgments
+*Websocket code borrowed heavily from [FreerGit](https://github.com/FreerGit) at [websocket-client-odin](https://github.com/FreerGit/websocket-client-odin)*
