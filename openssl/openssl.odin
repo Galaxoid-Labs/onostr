@@ -3,14 +3,33 @@ package openssl
 import "core:c"
 import "core:c/libc"
 
-when ODIN_OS == .Windows {
-	foreign import lib {"lib/windows/libssl_static.lib", "lib/windows/libcrypto_static.lib"}
-} else when ODIN_OS == .Darwin && ODIN_ARCH == .arm64 {
-	foreign import lib {"system:ssl.3", "system:crypto.3"}
-} else when ODIN_OS == .Linux && ODIN_ARCH == .arm64 {
-	foreign import lib {"lib/linux-arm/libssl.a", "lib/linux-arm/libcrypto.a"}
+when ODIN_OS == .Linux {
+	when ODIN_ARCH == .arm64 {
+		foreign import lib {"lib/linux-arm/libssl.a", "lib/linux-arm/libcrypto.a"}
+	} else when ODIN_ARCH == .amd64 {
+		foreign import lib {"lib/linux/libssl.a", "lib/linux/libcrypto.a"}
+	} else {
+		//foreign import lib {"system:ssl", "system:crypto"}
+		#panic("Unsupported architecture for OpenSSL on Linux: " + ODIN_ARCH)
+	}
+} else when ODIN_OS == .Darwin {
+	when ODIN_ARCH == .arm64 {
+		foreign import lib {"lib/macos-arm/libssl.a", "lib/macos-arm/libcrypto.a"}
+	} else when ODIN_ARCH == .amd64 {
+		foreign import lib {"lib/macos/libssl.a", "lib/macos/libcrypto.a"}
+	} else {
+		#panic("Unsupported architecture for OpenSSL on macOS: " + ODIN_ARCH)
+	}
+} else when ODIN_OS == .Windows {
+	when ODIN_ARCH == .arm64 {
+		foreign import lib {"lib/windows-arm/libssl_static.lib", "lib/windows-arm/libcrypto_static.lib"}
+	} else when ODIN_ARCH == .amd64 {
+		foreign import lib {"lib/windows/libssl_static.lib", "lib/windows/libcrypto_static.lib"}
+	} else {
+		#panic("Unsupported architecture for OpenSSL on windows: " + ODIN_ARCH)
+	}
 } else {
-	foreign import lib {"system:ssl", "system:crypto"}
+	#panic("Unsupported platform for OpenSSL on: " + ODIN_OS)
 }
 
 SSL_METHOD :: struct {}
