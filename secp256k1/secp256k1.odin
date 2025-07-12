@@ -13,11 +13,11 @@ when ODIN_OS == .Linux {
 	when ODIN_ARCH == .arm64 {
 		foreign import secp256k1 "lib/macos-arm/libsecp256k1.a"
 	} else {
-		foreign import secp256k1 "lib/macos/libsecp256k1.a" // TODO:
+		foreign import secp256k1 "lib/macos/libsecp256k1.a"
 	}
 } else when ODIN_OS == .Windows {
 	when ODIN_ARCH == .arm64 {
-		foreign import secp256k1 "lib/windows-arm/libsecp256k1.lib" // TODO:
+		foreign import secp256k1 "lib/windows-arm/libsecp256k1.lib"
 	} else {
 		foreign import secp256k1 "lib/windows/libsecp256k1.lib"
 	}
