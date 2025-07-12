@@ -11,12 +11,12 @@ Full support for Nostr keys available. Also, some basic support for creating, en
 
 ### Platform Support
 
-* ✅ - Linux amd64
-* ✅ - Linux aarch
-* ✅ - MacOS amd64
-* ✅ - MacOS aarch
-* ✅ - Win amd64
-* 🏗️ - Win aarch
+* ✅ - Linux x64
+* ✅ - Linux arm64
+* ✅ - MacOS x64
+* ✅ - MacOS arm64
+* ✅ - Windows x64
+* ✅ - Windows arm64
 
 
 #### Acknowledgments
