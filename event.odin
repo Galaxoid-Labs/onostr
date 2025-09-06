@@ -27,17 +27,15 @@ make_event :: proc(
 	allocator := context.allocator,
 	loc := #caller_location,
 ) -> Event {
-	return(
-		Event {
-			"",
-			strings.clone(kp.public_hex, allocator, loc),
-			time.time_to_unix(time.now()),
-			kind,
-			clone_tags(tags, allocator, loc),
-			strings.clone(content, allocator, loc),
-			"",
-		} \
-	)
+	return (Event {
+				"",
+				strings.clone(kp.public_hex, allocator, loc),
+				time.time_to_unix(time.now()),
+				kind,
+				clone_tags(tags, allocator, loc),
+				strings.clone(content, allocator, loc),
+				"",
+			})
 }
 
 make_event_from_json :: proc(json_str: string, allocator := context.allocator) -> Maybe(Event) {
@@ -80,7 +78,7 @@ sign_event :: proc(
 	defer delete(string_for_id, allocator, loc)
 
 	hash_id: [32]u8
-	hash.hash_string_to_buffer(hash.Algorithm.SHA256, string_for_id, hash_id[:]) //
+	hash.hash_string_to_buffer(hash.Algorithm.SHA256, string_for_id, hash_id[:])
 
 	id_bytes := hex.encode(hash_id[:], allocator, loc)
 
@@ -119,7 +117,7 @@ is_valid_signed_event :: proc(
 	defer delete(string_for_id, allocator, loc)
 
 	hash_id: [32]u8
-	hash.hash_string_to_buffer(hash.Algorithm.SHA256, string_for_id, hash_id[:]) //
+	hash.hash_string_to_buffer(hash.Algorithm.SHA256, string_for_id, hash_id[:])
 
 	id_bytes := hex.encode(hash_id[:], allocator, loc)
 	defer delete(id_bytes, allocator, loc)
